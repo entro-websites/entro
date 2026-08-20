@@ -428,6 +428,9 @@ h1, p { margin: 0; }
   padding-bottom: clamp(60px, 10vh, 120px);
 }
 
+/* linija sa krsticima ispod okvira, kao na predlosku */
+.video .rule { bottom: clamp(26px, 4vh, 48px); }
+
 .video__frame {
   position: relative;
   margin: 0;
@@ -440,16 +443,15 @@ h1, p { margin: 0; }
   position: absolute;
   inset: 0;
   margin: auto;
-  width: clamp(58px, 6vw, 86px);
-  height: clamp(58px, 6vw, 86px);
+  width: clamp(58px, 5.8vw, 84px);
+  height: clamp(46px, 4.6vw, 66px);
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  background: rgba(17, 24, 24, 0.62);
-  border: 1px solid rgba(238, 239, 234, 0.22);
-  color: var(--text);
+  border-radius: 8px;
+  background: rgba(17, 24, 24, 0.55);
+  color: #ffffff;
   transition: transform 0.3s var(--ease), background 0.3s ease, color 0.3s ease;
 }
 
-.video__play svg { width: 32%; height: 32%; }
+.video__play svg { width: 26%; height: 26%; }
 .video__play:hover { transform: scale(1.07); background: var(--lime); color: var(--ink); }
