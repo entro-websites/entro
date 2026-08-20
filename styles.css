@@ -27,6 +27,9 @@
   --blue: #155580;
   --lime: #def085;
 
+  /* pozadina strane; --ink ostaje tamno mastilo za tekst na limun podlozi */
+  --bg: #1a3934;
+
   --text: #eeefea;
   --text-60: rgba(238, 239, 234, 0.6);
   --text-40: rgba(238, 239, 234, 0.4);
@@ -55,7 +58,7 @@ body {
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.55;
-  background: var(--ink);
+  background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -219,7 +222,7 @@ h1, p { margin: 0; }
   left: 0;
   right: 0;
   z-index: 60;
-  background: rgba(17, 24, 24, 0.85);
+  background: rgba(26, 57, 52, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
@@ -251,7 +254,7 @@ h1, p { margin: 0; }
   position: fixed;
   inset: var(--hdr-h) 0 auto 0;
   z-index: 55;
-  background: var(--ink);
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
   transform: translateY(-110%);
   transition: transform 0.5s var(--ease);
@@ -334,7 +337,7 @@ h1, p { margin: 0; }
   height: 46px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--bg);
   background: var(--ink-2);
   margin-left: -14px;
 }
@@ -408,7 +411,45 @@ h1, p { margin: 0; }
   .seals { flex-wrap: wrap; }
 }
 
+@media (max-width: 760px) {
+  .ph--video { aspect-ratio: 4 / 3; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition-duration: 0.01ms !important; }
 }
+
+/* ============================================================
+   07. VIDEO
+   ============================================================ */
+.video {
+  padding-top: clamp(30px, 5vh, 60px);
+  padding-bottom: clamp(60px, 10vh, 120px);
+}
+
+.video__frame {
+  position: relative;
+  margin: 0;
+  border: clamp(5px, 0.6vw, 9px) solid var(--lime);
+}
+
+.ph--video { aspect-ratio: 16 / 10; width: 100%; align-items: start; }
+
+.video__play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: clamp(58px, 6vw, 86px);
+  height: clamp(58px, 6vw, 86px);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(17, 24, 24, 0.62);
+  border: 1px solid rgba(238, 239, 234, 0.22);
+  color: var(--text);
+  transition: transform 0.3s var(--ease), background 0.3s ease, color 0.3s ease;
+}
+
+.video__play svg { width: 32%; height: 32%; }
+.video__play:hover { transform: scale(1.07); background: var(--lime); color: var(--ink); }
