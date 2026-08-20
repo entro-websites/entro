@@ -473,8 +473,19 @@ h1, p { margin: 0; }
   .why__head .eyebrow { margin-bottom: 16px; }
 }
 
+@media (max-width: 1100px) {
+  .services__body { grid-template-columns: minmax(0, 1fr); }
+  .services__rail { flex-direction: row; align-items: center; gap: 12px; margin-bottom: 26px; padding-right: 0; }
+  .rail-badge { margin-bottom: 0; }
+  .services__rail strong { margin-left: 4px; }
+}
+
 @media (max-width: 760px) {
   .ph--video { aspect-ratio: 4 / 3; }
+  .svc__head { grid-template-columns: minmax(0, 1fr) 24px; }
+  .svc__tags { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; }
+  .ph--svc { aspect-ratio: 4 / 3; }
+  .svc__over { position: static; background: none; padding: 16px 0 0; }
   .acc__head, .acc__inner { grid-template-columns: 46px minmax(0, 1fr); }
   .acc__list li { margin-bottom: 12px; }
 }
@@ -671,4 +682,128 @@ h1, p { margin: 0; }
   width: 100%;
   align-items: start;
   margin-bottom: clamp(24px, 4vh, 46px);
+}
+
+/* ============================================================
+   09. USLUGE
+   Leva kolona je mali znak, akordeon ide od druge kolone do kraja.
+   ============================================================ */
+.services {
+  padding-top: clamp(66px, 11vh, 118px);
+  padding-bottom: clamp(56px, 9vh, 100px);
+}
+
+.why__row--top { align-items: flex-start; margin-top: 12px; }
+.why__row--top .lead { max-width: 40ch; }
+
+.services__body {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  padding-top: clamp(30px, 4.4vh, 52px);
+}
+
+.services__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-top: clamp(18px, 2.6vh, 30px);
+  padding-right: 20px;
+  font-size: 13px;
+  color: var(--text-40);
+}
+
+.services__rail strong { font-weight: 700; color: var(--text); }
+
+.rail-badge {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 14px;
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.rail-badge svg { width: 22px; height: 22px; }
+
+/* --- red usluge --- */
+.acc--svc .acc__item { border-top: 1px solid var(--line); }
+.acc--svc .acc__item:first-child { border-top: 0; }
+
+.svc__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 20px;
+  width: 100%;
+  padding-top: clamp(18px, 2.6vh, 30px);
+  padding-bottom: clamp(14px, 2vh, 22px);
+  text-align: left;
+}
+
+.svc__kicker { grid-column: 1; grid-row: 1; font-size: 13px; font-weight: 600; color: var(--text-40); }
+.acc--svc .acc__ico { grid-column: 2; grid-row: 1; justify-self: end; }
+
+.svc__title {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: clamp(22px, 2.9vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  color: var(--text-40);
+  transition: color 0.3s ease;
+}
+
+.acc__item.is-open .svc__title { color: var(--text); }
+
+.acc--svc .acc__item:not(.is-open) .svc__tags { display: none; }
+
+.svc__tags {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--ink-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.svc__inner { overflow: hidden; min-height: 0; }
+
+.svc__card {
+  position: relative;
+  margin-bottom: clamp(20px, 3vh, 32px);
+}
+
+.ph--svc { aspect-ratio: 16 / 5; width: 100%; align-items: start; }
+
+.svc__over {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: clamp(16px, 2.4vw, 30px);
+  background: linear-gradient(to top, rgba(17, 24, 24, 0.9), rgba(17, 24, 24, 0));
+}
+
+.svc__over p {
+  max-width: 44ch;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
 }
