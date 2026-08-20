@@ -4,415 +4,808 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>entro technology - sajtovi za male i srednje biznise</title>
-<meta name="description" content="entro je studio od dvoje ljudi. Pišemo tekst, radimo dizajn i pravimo sajtove posle kojih vlasnika zovu mušterije." />
+<meta name="description" content="Ljudi otvore vaš sajt, ne razumeju šta radite i pozovu nekog drugog. Pravimo sajtove na kojima odmah piše šta radite, za koga i koliko košta." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Anton&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@200;300;400&display=swap" rel="stylesheet" />
 
 <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-<!-- Cvet iz logotipa; koristi se i kao veliki ukras u pozadini -->
-<svg class="svg-defs" aria-hidden="true" focusable="false">
-  <symbol id="flower" viewBox="0 0 100 100">
-    <g fill="currentColor">
-      <ellipse cx="50" cy="50" rx="12" ry="34" />
-      <ellipse cx="50" cy="50" rx="12" ry="34" transform="rotate(45 50 50)" />
-      <ellipse cx="50" cy="50" rx="12" ry="34" transform="rotate(90 50 50)" />
-      <ellipse cx="50" cy="50" rx="12" ry="34" transform="rotate(135 50 50)" />
-    </g>
-  </symbol>
-</svg>
+<!-- ========================================================
+     OVERLAY ELEMENTI
+     ======================================================== -->
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="scroll-progress" aria-hidden="true"></div>
+<div id="cursor-label" aria-hidden="true">otvori ↗</div>
 
-<!-- Mreža od pet kolona, ide preko cele strane -->
-<div class="gridlines" aria-hidden="true">
-  <span></span><span></span><span></span><span></span><span></span><span></span>
+<div id="preloader">
+  <div class="preloader__row">
+    <div class="preloader__name">entro technology - web studio</div>
+    <div class="preloader__pct" id="preloader-pct">0</div>
+  </div>
 </div>
 
-<!-- ========================================================
-     HEADER
-     ======================================================== -->
-<header class="hdr">
-  <div class="wrap hdr__inner">
-    <a href="#hero" class="logo" aria-label="entro, početna">
-      <span>entr</span><svg class="logo__mark" aria-hidden="true"><use href="#flower" /></svg><span>.</span>
-    </a>
-    <button type="button" class="burger" id="burger" aria-label="Meni" aria-expanded="false" aria-controls="menu">
-      <span></span><span></span>
-    </button>
-  </div>
-</header>
 
-<div class="menu" id="menu">
-  <div class="wrap menu__inner">
-    <nav class="menu__nav">
-      <a href="#hero">Početna</a>
-      <a href="#hero">Usluge</a>
-      <a href="#hero">Radovi</a>
-      <a href="#hero">Kontakt</a>
+<div class="site" id="site">
+
+  <!-- ========================================================
+       HEADER
+       ======================================================== -->
+  <header id="site-header">
+    <a href="#hero" class="header__logo">entro<span class="header__logo-slash">/</span>tech</a>
+
+    <nav class="header__nav" id="header-nav">
+      <a href="#work" class="header__nav-link">Radovi</a>
+      <a href="#services" class="header__nav-link">Usluge</a>
+      <a href="#process" class="header__nav-link">Proces</a>
+      <a href="#contact" class="header__nav-link">Kontakt</a>
     </nav>
-    <div class="menu__foot">
+
+    <button type="button" id="burger" aria-label="Meni" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="burger__label" id="burger-label">Meni</span>
+      <span class="burger__lines">
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+      </span>
+    </button>
+  </header>
+
+  <!-- ========================================================
+       MOBILNI MENI
+       ======================================================== -->
+  <div id="mobile-menu">
+    <nav class="mobile-menu__nav">
+      <a href="#work" class="mobile-menu__link">Radovi</a>
+      <a href="#services" class="mobile-menu__link">Usluge</a>
+      <a href="#process" class="mobile-menu__link">Proces</a>
+      <a href="#contact" class="mobile-menu__link mobile-menu__link--accent">Kontakt</a>
+    </nav>
+    <div class="mobile-menu__foot">
       <span>zdravo@entro.rs</span>
-      <span>Beograd, Srbija</span>
     </div>
   </div>
-</div>
 
-<main>
+  <!-- ========================================================
+       HERO
+       ======================================================== -->
+  <section id="hero">
+    <h1 class="sr-only">entro technology - sajtovi za male i srednje biznise</h1>
 
-<!-- ========================================================
-     HERO
-     ======================================================== -->
-<section class="sec sec--dark hero" id="hero">
-  <svg class="deco-flower" aria-hidden="true"><use href="#flower" /></svg>
+    <div class="hero__meta">
+      <span>Sajtovi za male i srednje biznise</span>
+      <span id="hero-clock">44.7866° N, 20.4489° E</span>
+    </div>
 
-  <div class="rule rule--top" aria-hidden="true"></div>
-  <div class="rule rule--bottom" aria-hidden="true"></div>
-
-  <div class="wrap hero__grid">
-
-    <span class="eyebrow hero__label"><i>//</i> Upoznajte entro</span>
-
-    <div class="hero__main">
-      <h1 class="hero__title">Pravimo sajtove koji donose pozive.</h1>
-
-      <p class="hero__lead">entro je studio od dvoje ljudi. Pišemo tekst, radimo dizajn i pravimo sajt, pa mušterija u prvom redu vidi šta radite i koga da zove.</p>
-
-      <a href="#hero" class="btn btn--lime">Pogledajte usluge <span class="btn__ico">→</span></a>
-
-      <div class="founders">
-        <div class="founders__faces">
-          <span class="face"><img src="assets/tim-1.jpeg" alt="Član entro tima, portret" /></span>
-          <span class="face face--empty" aria-hidden="true"></span>
-        </div>
-        <p class="founders__text">
-          <span>Iza svega stoje</span>
-          <strong>dvoje ljudi, <em>bez posrednika</em></strong>
-        </p>
-      </div>
-
-      <div class="trusted">
-        <span class="trusted__label">Radili smo za 35+ domaćih biznisa</span>
-        <div class="trusted__logos">
-          <span class="ph ph--logo"><i>logo klijenta</i></span>
-          <span class="ph ph--logo"><i>logo klijenta</i></span>
-          <span class="ph ph--logo"><i>logo klijenta</i></span>
-        </div>
+    <div id="hero-stack">
+      <div class="hero__type hero__type--base" id="hero-base">
+        <div class="hero__line"><span class="hero__word js-hero-text">entro</span></div>
+        <div class="hero__line"><span class="hero__word hero__word--accent js-hero-text">technology</span></div>
       </div>
     </div>
 
-    <aside class="hero__side">
-      <div class="seals">
-        <span class="seal">odgovor<br /><b>2 dana</b></span>
-        <span class="seal seal--lime">sajt je<br /><b>vaš</b></span>
-        <span class="seal">bez<br /><b>agencije</b></span>
-      </div>
-
-      <div class="feat-block">
-        <span class="eyebrow eyebrow--bolt">Izdvojen rad</span>
-        <a href="#hero" class="feat">
-          <span class="ph ph--feat"><i>Screenshot sajta: Auto škola Dule</i></span>
-          <span class="feat__cap">Auto škola Dule - sajt koji vodi do upisa</span>
-        </a>
-      </div>
-    </aside>
-
-  </div>
-</section>
-
-<!-- ========================================================
-     VIDEO
-     ======================================================== -->
-<section class="sec sec--dark video">
-  <div class="rule" aria-hidden="true"></div>
-
-  <div class="wrap">
-    <figure class="video__frame">
-      <span class="ph ph--video"><i>Video: kako radimo, snimak iz kancelarije</i></span>
-      <button type="button" class="video__play" aria-label="Pusti video">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
-      </button>
+    <figure class="hero__portrait">
+      <img class="hero__portrait-img" src="assets/tim-1.jpeg" alt="Član entro tima u firmiranoj majici, portret" width="1221" height="1084" fetchpriority="high" />
+      <figcaption class="hero__portrait-tag">
+        <span class="live-dot"></span>
+        <span>Nas dvoje - pričate sa ljudima koji prave sajt</span>
+      </figcaption>
     </figure>
-  </div>
-</section>
 
+    <div class="hero__bottom">
+      <p class="hero__hook reveal">Ljudi otvore vaš sajt, ne razumeju šta radite i pozovu nekog drugog. Pravimo sajtove koji im odgovore u prvom redu.</p>
 
-<!-- ========================================================
-     ZASTO ENTRO
-     ======================================================== -->
-<section class="sec sec--light why" id="why">
-  <div class="rule rule--top" aria-hidden="true"></div>
-
-  <div class="wrap">
-
-    <div class="why__head">
-      <span class="eyebrow"><i>//</i> Zašto entro</span>
-      <div class="why__head-main">
-        <h2 class="h2">Spajamo jasan tekst i dizajn koji dovodi mušterije.</h2>
-        <p class="lead">Od prve rečenice do poslednjeg dugmeta, svaka odluka ide iz vašeg posla, a ne iz trendova.</p>
-        <div class="why__row">
-          <div class="minirate">
-            <div class="founders__faces">
-              <span class="face"><img src="assets/tim-1.jpeg" alt="Član entro tima, portret" /></span>
-              <span class="face face--empty" aria-hidden="true"></span>
-            </div>
-            <p class="minirate__text">
-              <span>Bez account menadžera</span>
-              <strong>Pričate sa ljudima koji rade</strong>
-            </p>
-          </div>
-          <a href="#hero" class="btn btn--dark">Saznajte više <span class="btn__ico">→</span></a>
+      <div class="hero__cta-block reveal">
+        <span class="hero__status"><span class="live-dot"></span><span>Primamo 3 projekta ovog meseca</span></span>
+        <div class="hero__buttons">
+          <a href="#contact" class="btn btn--primary js-magnetic"><span>Zakažite poziv</span><span class="mono">↗</span></a>
+          <a href="#contact" class="btn btn--ghost js-magnetic"><span>Besplatna analiza sajta</span></a>
         </div>
       </div>
+
+      <a href="#work" id="hero-cue">
+        <span>skrolujte</span>
+        <span class="hero__cue-track"><span id="hero-cue-fill"></span></span>
+      </a>
     </div>
+  </section>
 
-    <div class="acc" data-acc>
-
-      <div class="hr" aria-hidden="true"></div>
-
-      <article class="acc__item is-open" data-acc-item>
-        <button type="button" class="acc__head" data-acc-btn aria-expanded="true">
-          <span class="acc__num">01</span>
-          <span class="acc__head-main">
-            <span class="acc__title">Prvo tekst, pa dizajn</span>
-            <span class="acc__ico" aria-hidden="true"></span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="acc__inner">
-            <p class="acc__desc">Svaki projekat počinje od pitanja šta mušterija mora da pročita i kojim redom. Dizajn dolazi posle, da tu poruku pojača.</p>
-            <div class="acc__side">
-              <ul class="acc__list">
-                <li><span>Poruka</span><strong>Šta radite, u jednom redu</strong></li>
-                <li><span>Redosled</span><strong>Šta se čita prvo, šta posle</strong></li>
-                <li><span>Publika</span><strong>Ko tačno treba da vas nađe</strong></li>
-              </ul>
-              <a href="#hero" class="link-arrow">Vidite usluge <span>→</span></a>
-            </div>
-            <span class="ph ph--why"><i>Slika: skica strukture sajta na papiru</i></span>
-          </div>
-        </div>
-      </article>
-
-      <div class="hr" aria-hidden="true"></div>
-
-      <article class="acc__item" data-acc-item>
-        <button type="button" class="acc__head" data-acc-btn aria-expanded="false">
-          <span class="acc__num">02</span>
-          <span class="acc__head-main">
-            <span class="acc__title">Dizajn koji radi na telefonu</span>
-            <span class="acc__ico" aria-hidden="true"></span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="acc__inner">
-            <p class="acc__desc">Osam od deset ljudi otvara sajt na telefonu. Zato prvo crtamo mobilni ekran, pa tek onda desktop.</p>
-            <div class="acc__side">
-              <ul class="acc__list">
-                <li><span>Palac</span><strong>Sve važno na dohvat prsta</strong></li>
-                <li><span>Brzina</span><strong>Sajt se otvara ispod 2 sekunde</strong></li>
-                <li><span>Poziv</span><strong>Dugme za poziv na svakom ekranu</strong></li>
-              </ul>
-              <a href="#hero" class="link-arrow">Vidite usluge <span>→</span></a>
-            </div>
-            <span class="ph ph--why"><i>Slika: isti sajt na telefonu i na laptopu</i></span>
-          </div>
-        </div>
-      </article>
-
-      <div class="hr" aria-hidden="true"></div>
-
-      <article class="acc__item" data-acc-item>
-        <button type="button" class="acc__head" data-acc-btn aria-expanded="false">
-          <span class="acc__num">03</span>
-          <span class="acc__head-main">
-            <span class="acc__title">Sajt koji sami menjate</span>
-            <span class="acc__ico" aria-hidden="true"></span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="acc__inner">
-            <p class="acc__desc">Cene, tekst i slike menjate sami, za pet minuta. Nikad nam ne plaćate da promenimo broj telefona.</p>
-            <div class="acc__side">
-              <ul class="acc__list">
-                <li><span>Obuka</span><strong>Kratak video snimljen na vašem sajtu</strong></li>
-                <li><span>Vlasništvo</span><strong>Domen i nalozi na vaše ime</strong></li>
-                <li><span>Sloboda</span><strong>Niste vezani za nas</strong></li>
-              </ul>
-              <a href="#hero" class="link-arrow">Vidite usluge <span>→</span></a>
-            </div>
-            <span class="ph ph--why"><i>Slika: editor sajta sa otvorenim tekstom</i></span>
-          </div>
-        </div>
-      </article>
-
-      <div class="hr" aria-hidden="true"></div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ========================================================
-     USLUGE
-     ======================================================== -->
-<section class="sec sec--dark services" id="services">
-  <svg class="deco-flower" aria-hidden="true"><use href="#flower" /></svg>
-
-  <div class="rule rule--top" aria-hidden="true"></div>
-
-  <div class="wrap">
-
-    <div class="why__head">
-      <span class="eyebrow"><i>//</i> Usluge</span>
-      <div class="why__head-main">
-        <h2 class="h2">Šta radimo najbolje, i šta ide uz to.</h2>
-        <div class="why__row why__row--top">
-          <p class="lead">Tekst, dizajn, izrada i održavanje. Sve na jednom mestu, kod istih ljudi.</p>
-          <a href="#hero" class="btn btn--lime">Saznajte više <span class="btn__ico">→</span></a>
-        </div>
-      </div>
-    </div>
-
-    <div class="hr" aria-hidden="true"></div>
-
-    <div class="services__body">
-      <aside class="services__rail">
-        <span class="rail-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16v11H8l-4 4z" fill="currentColor" /></svg>
-        </span>
-        <span class="services__rail-top">Tekst · Dizajn · Izrada</span>
-        <strong>Sve kod istih ljudi</strong>
-      </aside>
-
-      <div class="acc acc--svc" data-acc>
-
-      <article class="acc__item svc is-open" data-acc-item>
-        <button type="button" class="svc__head" data-acc-btn aria-expanded="true">
-          <span class="svc__kicker">01 / Usluga</span>
-          <span class="acc__ico" aria-hidden="true"></span>
-          <span class="svc__title">Nov sajt</span>
-          <span class="svc__tags">
-            <span class="tag">Tekst</span>
-            <span class="tag">Dizajn</span>
-            <span class="tag">Izrada</span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="svc__inner">
-            <div class="svc__card">
-              <span class="ph ph--svc"><i>Slika: gotov sajt na desktopu i telefonu</i></span>
-              <div class="svc__over">
-                <p>Napišemo tekst, uradimo dizajn i napravimo sajt. Kad ga neko otvori, jasno je šta radite i šta treba da klikne.</p>
-                <a href="#hero" class="link-arrow">Krenite <span>→</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="acc__item svc" data-acc-item>
-        <button type="button" class="svc__head" data-acc-btn aria-expanded="false">
-          <span class="svc__kicker">02 / Usluga</span>
-          <span class="acc__ico" aria-hidden="true"></span>
-          <span class="svc__title">Sajt koji sami menjate</span>
-          <span class="svc__tags">
-            <span class="tag">WordPress</span>
-            <span class="tag">Webflow</span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="svc__inner">
-            <div class="svc__card">
-              <span class="ph ph--svc"><i>Slika: editor sajta sa panelom za izmene</i></span>
-              <div class="svc__over">
-                <p>Cene, tekst i slike menjate sami, za pet minuta. Uz sajt ide kratak video u kome vam pokažemo kako, snimljen na vašem sajtu.</p>
-                <a href="#hero" class="link-arrow">Krenite <span>→</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="acc__item svc" data-acc-item>
-        <button type="button" class="svc__head" data-acc-btn aria-expanded="false">
-          <span class="svc__kicker">03 / Usluga</span>
-          <span class="acc__ico" aria-hidden="true"></span>
-          <span class="svc__title">Popravka postojećeg sajta</span>
-          <span class="svc__tags">
-            <span class="tag">Analiza</span>
-            <span class="tag">Brzina</span>
-            <span class="tag">Lokalni SEO</span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="svc__inner">
-            <div class="svc__card">
-              <span class="ph ph--svc"><i>Slika: izveštaj o brzini sajta</i></span>
-              <div class="svc__over">
-                <p>Ako sajt radi, a niko ne zove, ne pravimo nov. Kažemo vam šta da se promeni, pa to i uradimo.</p>
-                <a href="#hero" class="link-arrow">Krenite <span>→</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="acc__item svc" data-acc-item>
-        <button type="button" class="svc__head" data-acc-btn aria-expanded="false">
-          <span class="svc__kicker">04 / Usluga</span>
-          <span class="acc__ico" aria-hidden="true"></span>
-          <span class="svc__title">Održavanje i podrška</span>
-          <span class="svc__tags">
-            <span class="tag">Bekap</span>
-            <span class="tag">Apdejt</span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="svc__inner">
-            <div class="svc__card">
-              <span class="ph ph--svc"><i>Slika: panel održavanja i bekapova</i></span>
-              <div class="svc__over">
-                <p>Mesečni bekapovi, apdejti i male izmene. Kad nešto pukne, imate koga da zovete, i javljamo se oboje.</p>
-                <a href="#hero" class="link-arrow">Krenite <span>→</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <article class="acc__item svc" data-acc-item>
-        <button type="button" class="svc__head" data-acc-btn aria-expanded="false">
-          <span class="svc__kicker">05 / Usluga</span>
-          <span class="acc__ico" aria-hidden="true"></span>
-          <span class="svc__title">Tekst i fotografija</span>
-          <span class="svc__tags">
-            <span class="tag">Copy</span>
-            <span class="tag">Priprema slika</span>
-          </span>
-        </button>
-        <div class="acc__panel">
-          <div class="svc__inner">
-            <div class="svc__card">
-              <span class="ph ph--svc"><i>Slika: pisanje teksta za sajt</i></span>
-              <div class="svc__over">
-                <p>Popričamo pola sata, mi napišemo prvu verziju teksta, vi ispravite ono što nije tačno. Slike sredimo i isečemo kako treba.</p>
-                <a href="#hero" class="link-arrow">Krenite <span>→</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
+  <!-- ========================================================
+       MARQUEE TRAKA
+       ======================================================== -->
+  <div class="marquee-band">
+    <div class="marquee js-marquee" data-speed="0.55">
+      <div class="marquee__half">
+        <span>WordPress</span><span class="marquee__sep">·</span>
+        <span>Webflow</span><span class="marquee__sep">·</span>
+        <span>Prvo reči</span><span class="marquee__sep">·</span>
+        <span>Lokalni SEO</span><span class="marquee__sep">·</span>
+        <span>Dvoje ljudi na poslu</span><span class="marquee__sep">·</span>
       </div>
     </div>
   </div>
-</section>
 
-</main>
+  <!-- ========================================================
+       01 — PROBLEM (STORY)
+       ======================================================== -->
+  <section id="story">
+    <div class="story__sticky">
+      <div class="story__inner">
+
+        <div class="story__head">
+          <span class="section-label">01 - <span>Problem</span></span>
+          <span class="story__scene">Jedna mušterija. Jedan telefon. Šest sekundi.</span>
+        </div>
+
+        <div class="story__grid">
+          <div class="story__meter">
+            <div class="story__timer-row">
+              <span id="story-timer">0.0</span>
+              <span class="story__timer-unit">s</span>
+            </div>
+            <div class="story__bar-track">
+              <div id="story-bar"></div>
+            </div>
+            <div class="story__bar-labels">
+              <span>kliknula na vaš link</span>
+              <span>nema je</span>
+            </div>
+          </div>
+
+          <div id="story-stages">
+            <div class="story__stage">
+              <span class="story__stage-time">00.0 - 01.5</span>
+              <p class="story__stage-title">Žena stoji ispred radnje vaše konkurencije i otvara vaš sajt.</p>
+              <p class="story__stage-body">Ima novac i jedno pitanje: da li ovi ljudi rade to što meni treba?</p>
+            </div>
+            <div class="story__stage">
+              <span class="story__stage-time">01.5 - 03.5</span>
+              <p class="story__stage-title">Prvo što piše je „dobrodošli na naš sajt“.</p>
+              <p class="story__stage-body">To piše i kod svih ostalih. Odgovor ne dobija, pa skroluje dalje.</p>
+            </div>
+            <div class="story__stage">
+              <span class="story__stage-time">03.5 - 05.0</span>
+              <p class="story__stage-title">Ne nalazi cenu. Ne vidi da li radite baš njen posao.</p>
+              <p class="story__stage-body">Piše „kontaktirajte nas“. Slike su stare. Broj telefona je negde na dnu.</p>
+            </div>
+            <div class="story__stage">
+              <span class="story__stage-time">05.0 - 06.0</span>
+              <p class="story__stage-title">Vraća se na Google. Sledeći sajt joj odgovori u prvom redu.</p>
+              <p class="story__stage-body">Vi ovo ne vidite. Vidite slab mesec i kažete da je sezona.</p>
+            </div>
+            <div class="story__stage">
+              <span class="story__stage-time">- <span>deo koji vam niko ne kaže</span></span>
+              <p class="story__stage-title story__stage-title--big">Niko vam ne kaže da je otišla. Samo vas ne pozovu.</p>
+              <p class="story__stage-body">I ne možete sami da promenite ni reč, jer onaj ko je pravio sajt ne odgovara od marta.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="story__ticks">
+          <div class="story__tick"><span class="story__tick-num">01</span><span class="story__tick-text">nema jasnog odgovora</span></div>
+          <div class="story__tick"><span class="story__tick-num">02</span><span class="story__tick-text">cena se krije</span></div>
+          <div class="story__tick"><span class="story__tick-num">03</span><span class="story__tick-text">nema šta da se klikne</span></div>
+          <div class="story__tick"><span class="story__tick-num">04</span><span class="story__tick-text">stare slike</span></div>
+          <div class="story__tick"><span class="story__tick-num">05</span><span class="story__tick-text">ne možete da menjate</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       02 — RESENJE
+       ======================================================== -->
+  <section id="solution">
+    <div class="container">
+      <span class="section-label reveal">02 - <span>Šta mi radimo s tim</span></span>
+
+      <h2 class="solution__title js-fill">Sajt na kome odmah piše šta radite, za koga i koliko to otprilike košta.</h2>
+      <p class="body-text solution__lead reveal">Ne pravimo nov sajt zato što stari izgleda staro. Pravimo ga da vas ljudi zovu.</p>
+
+      <!-- Before / after -->
+      <div id="compare">
+        <div class="compare__pane compare__pane--before">
+          <div class="compare__top">
+            <span class="compare__label">pre - šta imate</span>
+          </div>
+          <div class="compare__bottom">
+            <div class="compare__tags">
+              <span class="compare__tag">„dobrodošli na naš sajt“</span>
+              <span class="compare__tag">cena: „pozovite nas“</span>
+              <span class="compare__tag">broj telefona u slici</span>
+            </div>
+            <div class="compare__score">5 klikova</div>
+          </div>
+        </div>
+
+        <div class="compare__pane compare__pane--after" id="compare-after">
+          <div class="compare__top compare__top--right">
+            <span class="compare__label compare__label--after">posle - šta dobijate</span>
+          </div>
+          <div class="compare__bottom compare__bottom--right">
+            <div class="compare__tags compare__tags--right">
+              <span class="compare__tag compare__tag--after">šta radite, u jednom redu</span>
+              <span class="compare__tag compare__tag--after">okvirna cena na strani</span>
+              <span class="compare__tag compare__tag--after">dugme za poziv na svakom ekranu</span>
+            </div>
+            <div class="compare__score compare__score--after">1 klik</div>
+          </div>
+        </div>
+
+        <div id="compare-line">
+          <div class="compare__handle">↔</div>
+        </div>
+
+        <span id="compare-hint">prevucite za poređenje</span>
+      </div>
+
+      <!-- Statistika -->
+      <div class="stats">
+        <div class="stat reveal">
+          <div class="stat__value"><span class="js-count" data-target="2">0</span></div>
+          <div class="stat__label">osobe rade vaš sajt, od prve reči do predaje</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat__value"><span class="js-count" data-target="3">0</span></div>
+          <div class="stat__label">načina izrade: WordPress, Webflow, ručno kodirano</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat__value stat__value--accent"><span class="js-count" data-target="2">0</span></div>
+          <div class="stat__label">radna dana da dobijete odgovor od nas</div>
+        </div>
+        <div class="stat reveal">
+          <div class="stat__value">0</div>
+          <div class="stat__label">ljudi između vas i onih koji prave vaš sajt</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       03 — USLUGE
+       ======================================================== -->
+  <section id="services" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-label reveal">03 - <span>Usluge</span></span>
+          <h2 class="section-title js-split">Šta dobijate</h2>
+        </div>
+        <span class="services__hint reveal">Četiri načina da počnemo. Otvorite jedan da vidite šta je unutra.</span>
+      </div>
+
+      <div id="services-list">
+
+        <!-- Usluga 01 -->
+        <article class="service-row" id="service-1">
+          <div class="service-row__sweep"></div>
+          <div class="service-row__head">
+            <span class="service-row__num">/01</span>
+            <h3 class="service-row__title">Nov sajt</h3>
+            <span class="service-row__plus">+</span>
+          </div>
+          <div class="service-row__panel">
+            <div class="service-row__inner">
+              <span class="service-row__arrow">↳</span>
+              <div class="service-row__cols">
+                <div class="service-row__col">
+                  <p class="service-row__desc">Napišemo tekst, uradimo dizajn i napravimo sajt. Kad ga neko otvori, jasno je šta radite i šta treba da klikne.</p>
+                  <div class="service-row__tags">
+                    <span class="pill">prvo reči</span>
+                    <span class="pill">jedna akcija po ekranu</span>
+                    <span class="pill">pravljeno za telefon</span>
+                  </div>
+                </div>
+                <div class="service-row__aside">
+                  <div class="service-row__slot placeholder-slot">
+                    <span class="placeholder-slot__label">Slika: gotov sajt na desktopu i telefonu</span>
+                  </div>
+                  <span class="service-row__note">Većina projekata počinje ovde</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Usluga 02 -->
+        <article class="service-row" id="service-2">
+          <div class="service-row__sweep"></div>
+          <div class="service-row__head">
+            <span class="service-row__num">/02</span>
+            <h3 class="service-row__title">Sajt koji sami menjate</h3>
+            <span class="service-row__plus">+</span>
+          </div>
+          <div class="service-row__panel">
+            <div class="service-row__inner">
+              <span class="service-row__arrow">↳</span>
+              <div class="service-row__cols">
+                <div class="service-row__col">
+                  <p class="service-row__desc">WordPress ili Webflow. Cene, tekst i slike menjate sami, za pet minuta. Nikad nam ne plaćate da promenimo broj telefona.</p>
+                  <div class="service-row__tags">
+                    <span class="pill">kratak video za obuku</span>
+                    <span class="pill">niste vezani za nas</span>
+                    <span class="pill">sajt je vaš</span>
+                  </div>
+                </div>
+                <div class="service-row__aside">
+                  <div class="service-row__slot placeholder-slot">
+                    <span class="placeholder-slot__label">Slika: editor sajta sa pregledom za mobilni</span>
+                  </div>
+                  <span class="service-row__note">Bira se po projektu, ne po navici</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Usluga 03 -->
+        <article class="service-row" id="service-3">
+          <div class="service-row__sweep"></div>
+          <div class="service-row__head">
+            <span class="service-row__num">/03</span>
+            <h3 class="service-row__title">Popravka sajta koji imate</h3>
+            <span class="service-row__plus">+</span>
+          </div>
+          <div class="service-row__panel">
+            <div class="service-row__inner">
+              <span class="service-row__arrow">↳</span>
+              <div class="service-row__cols">
+                <div class="service-row__col">
+                  <p class="service-row__desc">Ako sajt radi, a niko ne zove, ne pravimo nov. Kažemo vam šta da se promeni, pa to i uradimo.</p>
+                  <div class="service-row__tags">
+                    <span class="pill">šta prvo popraviti</span>
+                    <span class="pill">da vas nađu ljudi iz komšiluka</span>
+                    <span class="pill">i tehnički deo</span>
+                  </div>
+                </div>
+                <div class="service-row__aside">
+                  <div class="service-row__slot placeholder-slot">
+                    <span class="placeholder-slot__label">Slika: izveštaj o brzini sajta</span>
+                  </div>
+                  <span class="service-row__note">Najjeftiniji ulaz</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Usluga 04 -->
+        <article class="service-row" id="service-4">
+          <div class="service-row__sweep"></div>
+          <div class="service-row__head">
+            <span class="service-row__num">/04</span>
+            <h3 class="service-row__title">Neko ko odgovara</h3>
+            <span class="service-row__plus">+</span>
+          </div>
+          <div class="service-row__panel">
+            <div class="service-row__inner">
+              <span class="service-row__arrow">↳</span>
+              <div class="service-row__cols">
+                <div class="service-row__col">
+                  <p class="service-row__desc">Bekapovi, apdejti i male izmene. Kad nešto pukne, imate koga da zovete, i javljamo se oboje.</p>
+                  <div class="service-row__tags">
+                    <span class="pill">mesečni bekapovi</span>
+                    <span class="pill">apdejti</span>
+                    <span class="pill">male izmene uključene</span>
+                  </div>
+                </div>
+                <div class="service-row__aside">
+                  <div class="service-row__slot placeholder-slot">
+                    <span class="placeholder-slot__label">Slika: panel održavanja, bekapovi i apdejti</span>
+                  </div>
+                  <span class="service-row__note">Opciono, nikad zaključano</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="services__foot">
+        <span class="services__foot-text reveal">Nema paketa i cenovnika. Posle analize dobijate jednu cenu za tačno ono što vam treba.</span>
+        <a href="#contact" class="btn--outline-sm js-magnetic"><span>Šta meni treba?</span><span>↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       04 — RADOVI
+       ======================================================== -->
+  <section id="work">
+    <div class="work__head">
+      <span class="section-label reveal">04 - <span>Odabrani radovi</span></span>
+      <h2 class="section-title work__title js-split">Pet sajtova i šta je svaki morao da reši</h2>
+      <span class="work__note reveal">Pređite kursorom preko kartice da je otvorite. Case study strane stižu.</span>
+    </div>
+
+    <div id="work-pin">
+      <div class="work__sticky">
+        <div id="work-track">
+
+          <!-- 01 — Auto škola Dule -->
+          <a href="#" class="project-card js-view" id="project-dule">
+            <div class="project-card__media placeholder-slot">
+              <span class="placeholder-slot__label">Screenshot sajta: Auto škola Dule</span>
+            </div>
+            <div class="project-card__meta">
+              <span class="project-card__name">Auto škola Dule <span class="project-card__index">01</span></span>
+              <span class="project-card__stack">Prezentacioni sajt<br />Upis i probni čas</span>
+            </div>
+            <p class="project-card__desc">Osam kategorija obuke na jednom sajtu. Roditelj i osamnaestogodišnjak moraju za pet sekundi da vide cenu i kako se upisuje.</p>
+          </a>
+
+          <!-- 02 — Pet Land -->
+          <a href="#" class="project-card js-view" id="project-petland">
+            <div class="project-card__media placeholder-slot">
+              <span class="placeholder-slot__label">Screenshot sajta: Pet Land</span>
+            </div>
+            <div class="project-card__meta">
+              <span class="project-card__name">Pet Land <span class="project-card__index">02</span></span>
+              <span class="project-card__stack">Veterinarska ambulanta<br />Beograd, Vidikovac</span>
+            </div>
+            <p class="project-card__desc">Vlasnik traži veterinara kad je pas već bolestan. Broj telefona i radno vreme moraju da stoje na svakom ekranu.</p>
+          </a>
+
+          <!-- 03 — Medar stolarija -->
+          <a href="#" class="project-card js-view" id="project-medar">
+            <div class="project-card__media placeholder-slot">
+              <span class="placeholder-slot__label">Screenshot sajta: Medar stolarija</span>
+            </div>
+            <div class="project-card__meta">
+              <span class="project-card__name">Medar stolarija <span class="project-card__index">03</span></span>
+              <span class="project-card__stack">Nameštaj po meri<br />Smederevo, od 1990.</span>
+            </div>
+            <p class="project-card__desc">Porodična radnja koja radi po meri. Sajt mora da pokaže radove, jer se kuhinja ne kupuje iz kataloga.</p>
+          </a>
+
+          <!-- 04 — Riva Atelier -->
+          <a href="#" class="project-card js-view" id="project-riva">
+            <div class="project-card__media placeholder-slot">
+              <span class="placeholder-slot__label">Screenshot sajta: Riva Atelier</span>
+            </div>
+            <div class="project-card__meta">
+              <span class="project-card__name">Riva Atelier <span class="project-card__index">04</span></span>
+              <span class="project-card__stack">Iznajmljivanje haljina<br />Rezervacija termina</span>
+            </div>
+            <p class="project-card__desc">Devojka bira haljinu za maturu na telefonu, uveče. Kolekcija mora da se pregleda palcem, a termin da se rezerviše iz dva klika.</p>
+          </a>
+
+          <!-- 05 — Foto Jocković -->
+          <a href="#" class="project-card js-view" id="project-jockovic">
+            <div class="project-card__media placeholder-slot">
+              <span class="placeholder-slot__label">Screenshot sajta: Foto Jocković</span>
+            </div>
+            <div class="project-card__meta">
+              <span class="project-card__name">Foto Jocković <span class="project-card__index">05</span></span>
+              <span class="project-card__stack">Foto radnja<br />Beograd</span>
+            </div>
+            <p class="project-card__desc">Slike za dokumenta, štampa i uramljivanje. Ljudi traže adresu i da li se radi za taj dan, i to je prvo što piše.</p>
+          </a>
+
+          <!-- Sledece -->
+          <div class="work__next">
+            <span class="work__next-label">Sledeće</span>
+            <p class="work__next-text">Strana po projektu: šta je vlasnik gubio, šta smo promenili i kako izgleda sada.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       05 — PROCES
+       ======================================================== -->
+  <section id="process">
+    <div class="process__ghost-wrap" aria-hidden="true">
+      <div id="process-ghost">01</div>
+    </div>
+
+    <div class="process__inner">
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-label reveal">05 - <span>Proces</span></span>
+          <h2 class="section-title js-split">Pet koraka, bez misterije</h2>
+        </div>
+        <p class="process__lead reveal">U svakom trenutku znate šta sledi. Ništa se ne gradi pre nego što se dogovorimo šta treba da radi.</p>
+      </div>
+
+      <div id="process-rail">
+        <div class="process__rail-line"></div>
+        <div id="process-rail-fill"></div>
+
+        <!-- Korak 01 -->
+        <div class="process-step process-step--1">
+          <span class="process-step__dot"></span>
+          <div class="process-step__body reveal">
+            <div class="process-step__top">
+              <span class="process-step__num">01</span>
+              <span class="process-step__dur">1. dan</span>
+            </div>
+            <h3 class="process-step__title">Analiza sajta</h3>
+            <p class="process-step__desc">Pošaljete nam sajt. Snimimo deset minuta o tome gde vam ljudi beže i šta bismo prvo promenili. Besplatno, i ostaje vama i ako nikada ne radimo zajedno.</p>
+            <div class="process-step__exchange">
+              <div class="process-step__cell"><span class="process-step__cell-label">vi dajete</span><span class="process-step__cell-value">Vaš link</span></div>
+              <div class="process-step__cell"><span class="process-step__cell-label process-step__cell-label--get">vi dobijate</span><span class="process-step__cell-value">Video od 10 minuta + tri izmene</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Korak 02 -->
+        <div class="process-step process-step--2">
+          <span class="process-step__dot"></span>
+          <div class="process-step__body reveal">
+            <div class="process-step__top">
+              <span class="process-step__num">02</span>
+              <span class="process-step__dur">1. nedelja</span>
+            </div>
+            <h3 class="process-step__title">Plan i tekst</h3>
+            <p class="process-step__desc">Kome se obraćamo, šta treba da pročitaju i u kom redu. Prvo reči. Lep dizajn ne može da spasi pogrešnu poruku.</p>
+            <div class="process-step__exchange">
+              <div class="process-step__cell"><span class="process-step__cell-label">vi dajete</span><span class="process-step__cell-value">Pola sata na pozivu</span></div>
+              <div class="process-step__cell"><span class="process-step__cell-label process-step__cell-label--get">vi dobijate</span><span class="process-step__cell-value">Mapa sajta i prva verzija teksta</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Korak 03 -->
+        <div class="process-step process-step--3">
+          <span class="process-step__dot"></span>
+          <div class="process-step__body reveal">
+            <div class="process-step__top">
+              <span class="process-step__num">03</span>
+              <span class="process-step__dur">2. nedelja</span>
+            </div>
+            <h3 class="process-step__title">Dizajn</h3>
+            <p class="process-step__desc">Prvo početna strana, da vidite kuda ovo ide pre nego što ceo sajt postoji. Ovde imate dva kruga izmena.</p>
+            <div class="process-step__exchange">
+              <div class="process-step__cell"><span class="process-step__cell-label">vi dajete</span><span class="process-step__cell-value">Slike, logo, napomene</span></div>
+              <div class="process-step__cell"><span class="process-step__cell-label process-step__cell-label--get">vi dobijate</span><span class="process-step__cell-value">Dizajn početne + dva kruga izmena</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Korak 04 -->
+        <div class="process-step process-step--4">
+          <span class="process-step__dot"></span>
+          <div class="process-step__body reveal">
+            <div class="process-step__top">
+              <span class="process-step__num">04</span>
+              <span class="process-step__dur">3. nedelja</span>
+            </div>
+            <h3 class="process-step__title">Izrada</h3>
+            <p class="process-step__desc">WordPress ili Webflow, šta vam više odgovara. Pravljeno za telefon i podešeno tako da menjate sami, bez nas.</p>
+            <div class="process-step__exchange">
+              <div class="process-step__cell"><span class="process-step__cell-label">vi dajete</span><span class="process-step__cell-value">Pristup domenu i hostingu</span></div>
+              <div class="process-step__cell"><span class="process-step__cell-label process-step__cell-label--get">vi dobijate</span><span class="process-step__cell-value">Živ sajt koji sami menjate</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Korak 05 -->
+        <div class="process-step process-step--5">
+          <span class="process-step__dot"></span>
+          <div class="process-step__body reveal">
+            <div class="process-step__top">
+              <span class="process-step__num">05</span>
+              <span class="process-step__dur">predaja</span>
+            </div>
+            <h3 class="process-step__title">Predaja</h3>
+            <p class="process-step__desc">Kratak video kako sami da promenite bilo šta, i brojevi sa kojima sajt kreće. Održavanje posle toga je vaša odluka.</p>
+            <div class="process-step__exchange">
+              <div class="process-step__cell"><span class="process-step__cell-label">vi dajete</span><span class="process-step__cell-value">Ništa</span></div>
+              <div class="process-step__cell"><span class="process-step__cell-label process-step__cell-label--get">vi dobijate</span><span class="process-step__cell-value">Video za editor + početni brojevi</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       06 — O NAMA
+       ======================================================== -->
+  <section id="about" class="section">
+    <div class="about__grid">
+      <div class="about__photos reveal js-parallax" data-parallax="0.04">
+        <figure class="about__photo">
+          <img class="about__img" src="assets/tim-1.jpeg" alt="Član entro tima u firmiranoj majici, portret" loading="lazy" width="1221" height="1084" />
+          <figcaption class="about__photo-tag">dizajn i tekst</figcaption>
+        </figure>
+        <figure class="about__photo about__photo--empty">
+          <span class="placeholder-slot__label">Fotografija: drugi član entro tima</span>
+          <figcaption class="about__photo-tag">izrada i tehnika</figcaption>
+        </figure>
+      </div>
+      <div class="about__text">
+        <span class="section-label reveal">06 - <span>O nama</span></span>
+        <h2 class="about__title js-split">Dvoje ljudi, od početka do kraja</h2>
+        <p class="about__para reveal">entro vodimo nas dvoje. Jedno piše tekst i radi dizajn, drugo kodira i pušta sajt u rad. Nema trećeg koji prenosi poruke.</p>
+        <p class="about__para reveal">Pravimo sajtove ljudima koji vode radnje, servise i male firme. U tom poslu jedan propušten poziv je pravi novac, pa se sve svodi na to da mušterija u prvom redu vidi da li ste vi pravi.</p>
+        <p class="about__para reveal">Bez account menadžera. Razgovarate sa oboma koji rade posao, i znate koga da zovete za godinu dana.</p>
+        <div class="about__guarantee reveal">
+          <div class="about__guarantee-title">Garancija zadovoljstva</div>
+          <p class="about__guarantee-text">Ako vam se prvi dizajn ne svidi, radimo dok ne bude kako treba. Ako ni tada niste zadovoljni, ne plaćate ništa, a analiza ostaje vama.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       07 — PITANJA
+       ======================================================== -->
+  <section id="faq">
+    <div class="faq__inner">
+      <div class="faq__head">
+        <span class="section-label reveal">07 - <span>Pitanja</span></span>
+        <h2 class="section-title js-split">Pitanja</h2>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Koliko košta sajt?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Zavisi od posla. Jednostrani sajt za frizera i shop sa 300 proizvoda nisu isti posao. Posle analize dobijate jednu cenu za sve, i ona se ne menja usput.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Koliko traje?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Dve do četiri nedelje. Najčešće se čeka na slike i tekst, pa vam unapred kažemo šta nam treba od vas i kada.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Moram li ja da pišem tekst?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Ne. Popričamo pola sata, mi napišemo prvu verziju, vi ispravite šta nije tačno. Vi znate svoje mušterije bolje od nas, ali ne treba da gledate u prazan papir.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Mogu li posle sam da menjam sajt?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Da. Tekst, cene, slike, nove strane. Dobijate kratak video kako, snimljen na vašem sajtu.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Zašto dvoje, a ne agencija?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Zato što na vašem sajtu rade tačno ta dva čoveka sa kojima ste pričali. Ništa se ne prosleđuje dalje, i niko ne nasleđuje projekat u pola posla.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-item__btn" aria-expanded="false"><span>Već imam sajt. Treba li mi novi?</span><span class="faq-item__icon">+</span></button>
+        <div class="faq-item__panel">
+          <p class="faq-item__answer">Često ne treba. Mnogim sajtovima trebaju jasnije reči i bolji redosled, a to košta manje. Analiza vam kaže u kojoj ste situaciji, i reći ćemo vam to i kad nas košta većeg posla.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       08 — KONTAKT
+       ======================================================== -->
+  <section id="contact">
+    <div id="contact-glow" aria-hidden="true"></div>
+
+    <div class="contact__inner">
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-label reveal">08 - <span>Počnite ovde</span></span>
+          <h2 class="contact__title js-split">Pošaljite nam svoj sajt</h2>
+        </div>
+        <div class="contact__status">
+          <span id="contact-clock">Beograd --:--:--</span>
+          <span class="contact__sla"><span class="live-dot"></span><span>Odgovaramo u roku od 2 radna dana</span></span>
+        </div>
+      </div>
+
+      <div class="contact__panels">
+
+        <!-- Leva kolona -->
+        <div class="contact__aside">
+          <span class="contact__aside-label">šta se dešava dalje</span>
+          <div class="contact__steps">
+            <div class="contact__step"><span class="contact__step-num">01</span><span class="contact__step-text">Otvorimo vaš sajt na telefonu, bez ijedne informacije o vama, kao što to radi vaša mušterija.</span></div>
+            <div class="contact__step"><span class="contact__step-num">02</span><span class="contact__step-text">Dobijate video od 10 minuta i tri stvari koje bismo prvo promenili.</span></div>
+            <div class="contact__step"><span class="contact__step-num">03</span><span class="contact__step-text">Ako želite da ih mi uradimo, pričamo o ceni. Ako ne, lista ostaje vama.</span></div>
+          </div>
+          <p class="contact__warning">Ako zatvorite ovaj tab, ništa se ne menja. Na sajtu i dalje piše „dobrodošli na naš sajt“, a ljudi koji su bili spremni da kupe i dalje zovu nekog drugog.</p>
+          <p class="contact__ps">P.S. Analiza je besplatna i uzme nam 20 minuta. Tri izmene ostaju vama i ako ih uradi drugi developer.</p>
+        </div>
+
+        <!-- Forma -->
+        <form id="contact-form" novalidate>
+          <div class="form__segments">
+            <div class="form__segment"><div class="form__segment-fill"></div></div>
+            <div class="form__segment"><div class="form__segment-fill"></div></div>
+            <div class="form__segment"><div class="form__segment-fill"></div></div>
+            <div class="form__segment"><div class="form__segment-fill"></div></div>
+          </div>
+
+          <div class="form__stage">
+            <div class="form__step is-active">
+              <span class="form__step-count">01 / 04</span>
+              <label class="form__label" for="field-name">S kim razgovaramo?</label>
+              <input class="form__input" id="field-name" name="name" type="text" placeholder="ime" />
+              <span class="form__help">Dovoljno je ime.</span>
+            </div>
+
+            <div class="form__step">
+              <span class="form__step-count">02 / 04</span>
+              <label class="form__label" for="field-email">Gde da pošaljemo video?</label>
+              <input class="form__input" id="field-email" name="email" type="email" placeholder="vi@firma.rs" />
+              <span class="form__help">Bez newslettera i bez niza mejlova posle.</span>
+            </div>
+
+            <div class="form__step">
+              <span class="form__step-count">03 / 04</span>
+              <label class="form__label" for="field-site">Koji sajt da rasklopimo?</label>
+              <input class="form__input" id="field-site" name="site" type="url" placeholder="vassajt.rs" />
+              <span class="form__help">Bilo koja strana. Ostalo ćemo naći.</span>
+            </div>
+
+            <div class="form__step">
+              <span class="form__step-count">04 / 04</span>
+              <label class="form__label" for="field-wish">Šta bi trebalo da radi, a ne radi?</label>
+              <input class="form__input" id="field-wish" name="wish" type="text" placeholder="donosi više poziva" />
+              <span class="form__help">Jedna rečenica, običnim rečima.</span>
+            </div>
+
+            <div class="form__done" id="form-done">
+              <span class="form__done-label">spremno za slanje</span>
+              <div class="form__summary" id="form-summary"></div>
+            </div>
+          </div>
+
+          <div class="form__controls">
+            <button type="button" id="form-back"><span>nazad</span></button>
+            <div class="form__controls-right">
+              <span id="form-note">pritisnite enter za dalje</span>
+              <button type="button" id="form-next" class="js-magnetic"><span>Dalje</span><span>→</span></button>
+              <button type="submit" id="form-send" class="js-magnetic">
+                <span id="form-send-fill"></span>
+                <span id="form-send-text">Držite za slanje</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Traka sa mejlom -->
+      <div id="copy-band">
+        <div class="marquee copy-band__marquee js-marquee" data-speed="0.32">
+          <div class="marquee__half">
+            <span class="copy-band__mail">zdravo@entro.rs</span>
+            <span class="copy-band__hint">kliknite da kopirate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact__mail-row">
+        <a href="mailto:zdravo@entro.rs" class="contact__mail-link">otvori mail</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer id="site-footer">
+    <span>© 2026 entro technology</span>
+    <span>Beograd, Srbija - radimo sa klijentima svuda</span>
+  </footer>
+
+</div>
 
 <script src="script.js"></script>
 </body>
