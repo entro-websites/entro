@@ -1,295 +1,890 @@
 /* ============================================================
-   entro technology — v3
+   entro technology — web studio
    script.js
    ------------------------------------------------------------
-   01. Pomocne funkcije      05. Brojaci
-   02. Meni                  06. Prekidac cena
-   03. Akordeoni             07. Izdvojeni projekat
-   04. Reveal                08. Utisci, vrh strane
+   SADRZAJ
+   01. Tekstovi koje JS ispisuje
+   02. Pomocne funkcije
+   03. Tekst iz recnika
+   04. Preloader
+   05. Mobilni meni
+   06. Split naslovi i fill tekst
+   07. Reveal animacije + brojaci
+   08. Kursor, magnetna dugmad
+   09. Marquee trake
+   10. Hero animacija
+   11. Before / after poredjenje
+   12. Usluge (akordeon)
+   13. FAQ
+   14. Kontakt forma
+   15. Satovi
+   16. Kopiranje mejla
+   17. Glavna scroll petlja
+   18. Start
    ============================================================ */
 
 'use strict';
 
 /* ============================================================
-   01. POMOCNE FUNKCIJE
+   01. TEKSTOVI KOJE JS ISPISUJE
+   Sve sto se vidi u HTML-u stoji u index.html; ovde su samo
+   fraze koje skripta upisuje dinamicki.
+   ============================================================ */
+const UI = {
+  menuOpen: 'Meni', menuClose: 'Zatvori',
+  formHoldHint: 'Držite dugme jednu sekundu',
+  formEnterHint: 'pritisnite enter za dalje',
+  formErrEmail: 'Treba nam ispravan email',
+  formErrShort: 'Napišite nekoliko reči',
+  formSent: 'Poslato',
+  formSentNote: 'Odgovaramo u roku od dva radna dana.',
+  copyDone: 'kopirano ✓', copyIdle: 'kliknite da kopirate', copyLong: 'držite pa Kopiraj',
+  city: 'Beograd '
+};
+
+const MAIL = 'zdravo@entro.rs';
+
+/* ============================================================
+   02. POMOCNE FUNKCIJE
    ============================================================ */
 const qs = (sel, ctx) => (ctx || document).querySelector(sel);
 const qsa = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canHover = window.matchMedia('(hover: hover)').matches;
 
 /* ============================================================
-   02. MENI
+   03. TEKST IZ RECNIKA
    ============================================================ */
-function initMenu() {
-  const burger = qs('#burger');
-  const menu = qs('#menu');
-  if (!burger || !menu) return;
+const i18n = {
+  t(key) {
+    return UI[key];
+  }
+};
 
-  const set = (open) => {
-    burger.classList.toggle('is-open', open);
-    menu.classList.toggle('is-open', open);
-    burger.setAttribute('aria-expanded', String(open));
+/* ============================================================
+   04. PRELOADER
+   ============================================================ */
+function initPreloader(onDone) {
+  const box = qs('#preloader');
+  const pct = qs('#preloader-pct');
+  if (!box || !pct) { onDone(); return; }
+
+  const start = performance.now();
+  const duration = 1100;
+
+  const tick = (t) => {
+    const p = Math.min(1, (t - start) / duration);
+    pct.textContent = Math.round(p * 100);
+    if (p < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      setTimeout(() => {
+        box.classList.add('is-hidden');
+        onDone();
+      }, 220);
+    }
   };
-
-  burger.addEventListener('click', () => set(!menu.classList.contains('is-open')));
-  qsa('a', menu).forEach(a => a.addEventListener('click', () => set(false)));
-  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+  requestAnimationFrame(tick);
 }
 
 /* ============================================================
-   03. AKORDEONI
-   Svaka grupa drzi otvorenu tacno jednu stavku.
+   05. MOBILNI MENI
    ============================================================ */
-function initAccordions() {
-  qsa('[data-acc]').forEach(group => {
-    const items = qsa('[data-acc-item]', group);
+function initMobileMenu() {
+  const burger = qs('#burger');
+  const menu = qs('#mobile-menu');
+  const label = qs('#burger-label');
+  if (!burger || !menu) return;
 
-    const paint = (openIndex) => {
-      items.forEach((item, i) => {
-        const on = i === openIndex;
-        item.classList.toggle('is-open', on);
-        const btn = qs('[data-acc-btn]', item);
-        if (btn) btn.setAttribute('aria-expanded', String(on));
-      });
-    };
+  let open = false;
 
-    items.forEach((item, i) => {
-      const btn = qs('[data-acc-btn]', item);
-      if (!btn) return;
-      btn.addEventListener('click', () => {
-        paint(item.classList.contains('is-open') ? -1 : i);
-      });
+  const set = (value) => {
+    open = value;
+    menu.classList.toggle('is-open', value);
+    burger.classList.toggle('is-open', value);
+    burger.setAttribute('aria-expanded', String(value));
+    if (label) label.textContent = value ? i18n.t('menuClose') : i18n.t('menuOpen');
+  };
+
+  set(false);
+  burger.addEventListener('click', () => set(!open));
+  qsa('.mobile-menu__link', menu).forEach(a => a.addEventListener('click', () => set(false)));
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && open) set(false); });
+  window.addEventListener('resize', () => { if (open && window.innerWidth > 820) set(false); });
+}
+
+/* ============================================================
+   06. SPLIT NASLOVI I FILL TEKST
+   ============================================================ */
+
+/* Naslovi se razlazu na reci koje ulaze odozdo */
+function splitHeadings(force) {
+  qsa('.js-split').forEach(h => {
+    if (!force && h.dataset.splitDone === '1') return;
+
+    const text = h.dataset.splitSource || h.textContent;
+    h.dataset.splitSource = text;
+    h.textContent = '';
+
+    text.split(/(\s+)/).forEach((word, i) => {
+      if (!word.trim()) { h.appendChild(document.createTextNode(word)); return; }
+      const outer = document.createElement('span');
+      outer.className = 'split-word';
+      const inner = document.createElement('span');
+      inner.className = 'split-word__inner';
+      inner.style.transitionDelay = (i * 0.03).toFixed(3) + 's';
+      inner.textContent = word;
+      outer.appendChild(inner);
+      h.appendChild(outer);
     });
+
+    h.dataset.splitDone = '1';
+    if (prefersReducedMotion) h.classList.add('is-animated');
+  });
+}
+
+/* Recenica koja se pali rec po rec dok se skroluje */
+function fillHeadings(force) {
+  qsa('.js-fill').forEach(h => {
+    if (!force && h.dataset.fillDone === '1') return;
+
+    const text = h.dataset.fillSource || h.textContent;
+    h.dataset.fillSource = text;
+    h.textContent = '';
+
+    text.split(/\s+/).filter(Boolean).forEach((word, i, arr) => {
+      const span = document.createElement('span');
+      span.className = 'fill-word';
+      span.textContent = word;
+      h.appendChild(span);
+      if (i < arr.length - 1) h.appendChild(document.createTextNode(' '));
+    });
+
+    h.dataset.fillDone = '1';
   });
 }
 
 /* ============================================================
-   04. REVEAL
+   07. REVEAL ANIMACIJE + BROJACI
    ============================================================ */
-function initReveal() {
-  const targets = qsa('.sec-head, .acc, .stats, .quote, .timeline, .table, .feature, .steps, .plans, .review, .review-row, .ftr__main, .hero__main, .hero__side, .video__frame');
-  targets.forEach(el => el.classList.add('reveal'));
+function animateCount(el) {
+  if (el.dataset.counted === '1') return;
+  el.dataset.counted = '1';
 
-  if (prefersReducedMotion) {
-    targets.forEach(el => el.classList.add('is-in'));
-    return;
-  }
+  const target = parseFloat(el.dataset.target) || 0;
+  const start = performance.now();
+  const duration = 1300;
+
+  const step = (t) => {
+    const p = Math.min(1, (t - start) / duration);
+    el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function initReveals() {
+  const targets = qsa('.reveal, .js-split');
+  if (!targets.length) return;
 
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-in');
+      entry.target.classList.add('is-animated');
+      qsa('.js-count', entry.target).forEach(animateCount);
       io.unobserve(entry.target);
     });
-  }, { rootMargin: '0px 0px -12% 0px' });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
   targets.forEach(el => io.observe(el));
 }
 
 /* ============================================================
-   05. BROJACI
+   08. KURSOR, MAGNETNA DUGMAD
    ============================================================ */
-function initCounters() {
-  const nums = qsa('.js-count');
-  if (!nums.length) return;
+const pointer = { mx: -200, my: -200, cx: -200, cy: -200 };
 
-  const run = (el) => {
-    const target = parseInt(el.dataset.target, 10) || 0;
-    if (prefersReducedMotion || target === 0) { el.textContent = target; return; }
+function initCursor() {
+  const dot = qs('#cursor-dot');
+  const label = qs('#cursor-label');
+  const magnets = qsa('.js-magnetic');
 
-    const start = performance.now();
-    const dur = 1400;
+  window.addEventListener('mousemove', (e) => {
+    pointer.mx = e.clientX;
+    pointer.my = e.clientY;
 
-    const tick = (t) => {
-      const p = Math.min(1, (t - start) / dur);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    magnets.forEach(m => {
+      const r = m.getBoundingClientRect();
+      const dx = pointer.mx - (r.left + r.width / 2);
+      const dy = pointer.my - (r.top + r.height / 2);
+      if (Math.hypot(dx, dy) < 150) {
+        m.style.transition = 'transform .18s ease-out';
+        m.style.transform = 'translate(' + dx * 0.22 + 'px,' + dy * 0.22 + 'px)';
+      } else if (m.style.transform) {
+        m.style.transition = 'transform .5s cubic-bezier(.16,1,.3,1)';
+        m.style.transform = 'translate(0,0)';
+      }
+    });
+  }, { passive: true });
+
+  const grow = () => { if (dot) { dot.style.width = '52px'; dot.style.height = '52px'; } };
+  const reset = () => { if (dot) { dot.style.width = '14px'; dot.style.height = '14px'; } };
+  const hide = () => { if (dot) { dot.style.width = '0px'; dot.style.height = '0px'; } };
+
+  qsa('a, button, .service-row, #copy-band').forEach(el => {
+    if (el.classList.contains('js-view')) return;
+    el.addEventListener('mouseenter', grow);
+    el.addEventListener('mouseleave', reset);
+  });
+
+  qsa('.js-view').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      if (label) label.style.opacity = '1';
+      hide();
+    });
+    el.addEventListener('mouseleave', () => {
+      if (label) label.style.opacity = '0';
+      reset();
+    });
+  });
+}
+
+/* ============================================================
+   09. MARQUEE TRAKE
+   ============================================================ */
+const marquees = [];
+
+function initMarquees() {
+  qsa('.js-marquee').forEach(track => {
+    const half = qs('.marquee__half', track);
+    if (!half) return;
+
+    if (track.dataset.ready !== '1') {
+      track.appendChild(half.cloneNode(true));
+      track.appendChild(half.cloneNode(true));
+      track.dataset.ready = '1';
+    }
+
+    marquees.push({
+      track,
+      half,
+      x: 0,
+      width: 0,
+      paused: false,
+      speed: parseFloat(track.dataset.speed) || 0.5
+    });
+  });
+
+  const measure = () => marquees.forEach(m => { m.width = m.half.getBoundingClientRect().width; });
+  measure();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  window.addEventListener('resize', measure);
+}
+
+/* ============================================================
+   10. HERO ANIMACIJA
+   ============================================================ */
+const hero = { stack: null, base: null, chars: [] };
+
+function initHero() {
+  hero.stack = qs('#hero-stack');
+  if (!hero.stack) return;
+
+  hero.base = qs('#hero-base');
+
+  qsa('.js-hero-text', hero.stack).forEach(holder => {
+    if (holder.dataset.split === '1') return;
+    const text = holder.textContent;
+    holder.textContent = '';
+
+    Array.from(text).forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'hero__char';
+      span.style.transitionDelay = (i * 0.035).toFixed(3) + 's';
+      span.textContent = ch;
+      holder.appendChild(span);
+    });
+    holder.dataset.split = '1';
+  });
+
+  hero.chars = qsa('.hero__char', hero.stack);
+  const release = () => hero.chars.forEach(c => c.classList.add('is-in'));
+
+  if (prefersReducedMotion) {
+    release();
+  } else {
+    setTimeout(release, 120);
+  }
+}
+
+/* ============================================================
+   11. BEFORE / AFTER POREDJENJE
+   ============================================================ */
+const compare = { el: null, after: null, line: null, pos: 50, auto: true, dragging: false };
+
+function initCompare() {
+  compare.el = qs('#compare');
+  if (!compare.el) return;
+
+  compare.after = qs('#compare-after');
+  compare.line = qs('#compare-line');
+  const hint = qs('#compare-hint');
+
+  const apply = () => {
+    if (compare.after) compare.after.style.clipPath = 'inset(0 0 0 ' + compare.pos.toFixed(2) + '%)';
+    if (compare.line) compare.line.style.left = compare.pos.toFixed(2) + '%';
+  };
+  compare.apply = apply;
+
+  const setFromX = (clientX) => {
+    const r = compare.el.getBoundingClientRect();
+    compare.pos = clamp(((clientX - r.left) / r.width) * 100, 4, 96);
+    apply();
   };
 
+  const stopAuto = () => {
+    if (!compare.auto) return;
+    compare.auto = false;
+    if (hint) hint.classList.add('is-hidden');
+  };
+
+  compare.el.addEventListener('pointerdown', (e) => {
+    compare.dragging = true;
+    stopAuto();
+    setFromX(e.clientX);
+  });
+  window.addEventListener('pointerup', () => { compare.dragging = false; });
+  window.addEventListener('pointermove', (e) => {
+    if (compare.dragging) { setFromX(e.clientX); return; }
+    if (compare.auto) return;
+    const r = compare.el.getBoundingClientRect();
+    if (e.clientY > r.top && e.clientY < r.bottom && e.clientX > r.left && e.clientX < r.right) setFromX(e.clientX);
+  }, { passive: true });
+
+  let lastX = null;
+  compare.el.addEventListener('pointermove', (e) => {
+    if (!compare.auto) return;
+    if (lastX !== null && Math.abs(e.clientX - lastX) > 6) stopAuto();
+    lastX = e.clientX;
+  }, { passive: true });
+
+  apply();
+}
+
+/* ============================================================
+   12. USLUGE (AKORDEON)
+   ============================================================ */
+function initServices() {
+  const list = qs('#services-list');
+  const rows = qsa('.service-row');
+  if (!list || !rows.length) return;
+
+  let open = -1;
+  let expandTimer = null;
+
+  const paint = () => {
+    if (expandTimer) { clearTimeout(expandTimer); expandTimer = null; }
+
+    rows.forEach((row, i) => {
+      const on = i === open;
+      const panel = qs('.service-row__panel', row);
+      row.classList.toggle('is-open', on);
+
+      if (panel) {
+        if (panel.style.maxHeight === 'none') {
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+          void panel.offsetHeight;
+        }
+        panel.style.maxHeight = on ? panel.scrollHeight + 'px' : '0px';
+      }
+    });
+
+    list.classList.toggle('has-open', open >= 0);
+
+    if (open >= 0) {
+      const panel = qs('.service-row__panel', rows[open]);
+      expandTimer = setTimeout(() => { if (panel) panel.style.maxHeight = 'none'; }, 800);
+    }
+  };
+
+  rows.forEach((row, i) => {
+    const head = qs('.service-row__head', row);
+    (head || row).addEventListener('click', (e) => {
+      e.stopPropagation();
+      open = open === i ? -1 : i;
+      paint();
+    });
+    row.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse' && open !== i) { open = i; paint(); }
+    });
+  });
+
+  list.addEventListener('pointerleave', (e) => {
+    if (e.pointerType === 'mouse') { open = -1; paint(); }
+  });
+
+  /* Prvi red se sam otvori kad sekcija udje u vidno polje */
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      run(entry.target);
-      io.unobserve(entry.target);
+      if (entry.isIntersecting && open === -1) { open = 0; paint(); io.disconnect(); }
     });
-  }, { threshold: 0.6 });
+  }, { threshold: 0.4 });
+  io.observe(rows[0]);
 
-  nums.forEach(n => io.observe(n));
-}
-
-/* ============================================================
-   06. PREKIDAC CENA
-   ============================================================ */
-function initPriceSwitch() {
-  const box = qs('[data-switch]');
-  if (!box) return;
-
-  const buttons = qsa('button', box);
-
-  const apply = (mode) => {
-    buttons.forEach(b => b.classList.toggle('is-active', b.dataset.mode === mode));
-    qsa('[data-price], [data-unit]').forEach(el => {
-      const value = el.dataset[mode];
-      if (value) el.textContent = value;
-    });
-  };
-
-  buttons.forEach(b => b.addEventListener('click', () => apply(b.dataset.mode)));
-}
-
-/* ============================================================
-   07. IZDVOJENI PROJEKAT
-   ============================================================ */
-const PROJECTS = [
-  {
-    mark: 'Auto škola Dule',
-    title: 'Auto škola Dule - sajt koji vodi do upisa',
-    services: 'Tekst<br />Dizajn<br />Izrada sajta',
-    scope: 'Osam kategorija<br />Cenovnik<br />Forma za upis',
-    time: '3 nedelje',
-    ph: 'Screenshot sajta: Auto škola Dule',
-    desc: 'Roditelj i osamnaestogodišnjak moraju za pet sekundi da vide cenu i kako se upisuje. Sve ostalo ide ispod toga.'
-  },
-  {
-    mark: 'Pet Land',
-    title: 'Pet Land - veterinarska ambulanta na Vidikovcu',
-    services: 'Tekst<br />Dizajn<br />Izrada sajta',
-    scope: 'Usluge ambulante<br />Radno vreme<br />Poziv jednim klikom',
-    time: '3 nedelje',
-    ph: 'Screenshot sajta: Pet Land',
-    desc: 'Vlasnik traži veterinara kad je pas već bolestan. Broj telefona i radno vreme stoje na svakom ekranu.'
-  },
-  {
-    mark: 'Medar stolarija',
-    title: 'Medar stolarija - nameštaj po meri iz Smedereva',
-    services: 'Tekst<br />Dizajn<br />Priprema slika',
-    scope: 'Galerija radova<br />Upit za ponudu',
-    time: '4 nedelje',
-    ph: 'Screenshot sajta: Medar stolarija',
-    desc: 'Kuhinja se ne kupuje iz kataloga. Sajt mora da pokaže radove i da čoveku bude lako da pošalje mere.'
-  },
-  {
-    mark: 'Riva Atelier',
-    title: 'Riva Atelier - iznajmljivanje svečanih haljina',
-    services: 'Tekst<br />Dizajn<br />Izrada sajta',
-    scope: 'Kolekcija<br />Rezervacija termina',
-    time: '4 nedelje',
-    ph: 'Screenshot sajta: Riva Atelier',
-    desc: 'Devojka bira haljinu na telefonu, uveče. Kolekcija se pregleda palcem, a termin se rezerviše iz dva klika.'
-  },
-  {
-    mark: 'Foto Jocković',
-    title: 'Foto Jocković - foto radnja iz Beograda',
-    services: 'Tekst<br />Dizajn<br />Lokalni SEO',
-    scope: 'Usluge i cene<br />Adresa i mapa',
-    time: '2 nedelje',
-    ph: 'Screenshot sajta: Foto Jocković',
-    desc: 'Slike za dokumenta, štampa i uramljivanje. Ljudi traže adresu i da li se radi za taj dan, i to je prvo što piše.'
-  }
-];
-
-function initFeature() {
-  const box = qs('[data-feature]');
-  if (!box) return;
-
-  const el = {
-    mark: qs('[data-f-mark]', box),
-    title: qs('[data-f-title]', box),
-    services: qs('[data-f-services]', box),
-    scope: qs('[data-f-scope]', box),
-    time: qs('[data-f-time]', box),
-    ph: qs('[data-f-ph]', box),
-    desc: qs('[data-f-desc]', box),
-    index: qs('[data-f-index]', box)
-  };
-
-  let i = 0;
-
-  const paint = () => {
-    const p = PROJECTS[i];
-    el.mark.textContent = p.mark;
-    el.title.textContent = p.title;
-    el.services.innerHTML = p.services;
-    el.scope.innerHTML = p.scope;
-    el.time.textContent = p.time;
-    el.ph.textContent = p.ph;
-    el.desc.textContent = p.desc;
-    el.index.textContent = String(i + 1).padStart(2, '0');
-  };
-
-  qs('[data-f-prev]', box).addEventListener('click', () => { i = (i - 1 + PROJECTS.length) % PROJECTS.length; paint(); });
-  qs('[data-f-next]', box).addEventListener('click', () => { i = (i + 1) % PROJECTS.length; paint(); });
-
+  window.addEventListener('resize', paint);
   paint();
 }
 
 /* ============================================================
-   08. UTISCI I VRH STRANE
+   13. FAQ
    ============================================================ */
-const REVIEWS = [
-  {
-    text: 'Mesto za utisak klijenta. Kad dobijete prvu poruku od zadovoljnog vlasnika, ona ide ovde, sa imenom i firmom.',
-    name: 'Ime klijenta',
-    firm: 'Naziv firme'
-  },
-  {
-    text: 'Mesto za drugi utisak. Najbolje prolazi rečenica u kojoj se vidi šta se konkretno promenilo posle sajta.',
-    name: 'Ime klijenta',
-    firm: 'Naziv firme'
-  },
-  {
-    text: 'Mesto za treći utisak. Ako klijent pomene broj poziva ili upita, ostavite ga, to čita svako.',
-    name: 'Ime klijenta',
-    firm: 'Naziv firme'
-  }
-];
+function initFaq() {
+  const items = qsa('.faq-item');
 
-function initReviews() {
-  const box = qs('[data-review]');
-  if (!box) return;
+  items.forEach(item => {
+    const btn = qs('.faq-item__btn', item);
+    const panel = qs('.faq-item__panel', item);
+    if (!btn || !panel) return;
 
-  const text = qs('[data-r-text]', box);
-  const name = qs('[data-r-name]', box);
-  const firm = qs('[data-r-firm]', box);
-  const index = qs('[data-r-index]', box);
+    btn.addEventListener('click', () => {
+      const wasOpen = item.classList.contains('is-open');
 
-  let i = 0;
+      items.forEach(other => {
+        other.classList.remove('is-open');
+        const p = qs('.faq-item__panel', other);
+        if (p) p.style.maxHeight = '0px';
+        const b = qs('.faq-item__btn', other);
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
 
-  const paint = () => {
-    text.textContent = REVIEWS[i].text;
-    name.textContent = REVIEWS[i].name;
-    firm.textContent = REVIEWS[i].firm;
-    index.textContent = String(i + 1).padStart(2, '0');
-  };
-
-  qs('[data-r-prev]', box).addEventListener('click', () => { i = (i - 1 + REVIEWS.length) % REVIEWS.length; paint(); });
-  qs('[data-r-next]', box).addEventListener('click', () => { i = (i + 1) % REVIEWS.length; paint(); });
-
-  paint();
-}
-
-function initToTop() {
-  const btn = qs('#totop');
-  if (!btn) return;
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' }));
+      if (!wasOpen) {
+        item.classList.add('is-open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
 }
 
 /* ============================================================
-   START
+   14. KONTAKT FORMA
    ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
+function initForm() {
+  const form = qs('#contact-form');
+  if (!form) return;
+
+  const steps = qsa('.form__step', form);
+  const inputs = steps.map(step => qs('.form__input', step));
+  const segFills = qsa('.form__segment-fill', form);
+  const done = qs('#form-done');
+  const summary = qs('#form-summary');
+  const backBtn = qs('#form-back');
+  const nextBtn = qs('#form-next');
+  const sendBtn = qs('#form-send');
+  const sendFill = qs('#form-send-fill');
+  const sendText = qs('#form-send-text');
+  const note = qs('#form-note');
+
+  let index = 0;
+  let sent = false;
+  let touched = false; /* fokus se hvata tek posle prve interakcije */
+
+  const isValid = (i) => {
+    const value = (inputs[i].value || '').trim();
+    if (value.length < 2) return false;
+    if (inputs[i].type === 'email') return /.+@.+\..+/.test(value);
+    return true;
+  };
+
+  const labelText = (i) => {
+    const el = qs('.form__label', steps[i]);
+    return el ? el.textContent : '';
+  };
+
+  const paint = () => {
+    const atEnd = index >= steps.length;
+
+    steps.forEach((step, i) => {
+      step.classList.toggle('is-active', i === index);
+      step.classList.toggle('is-past', i < index);
+    });
+
+    if (done) done.classList.toggle('is-active', atEnd);
+
+    segFills.forEach((fill, i) => {
+      fill.style.width = (i < index || (i === index && isValid(i))) ? '100%' : '0%';
+    });
+
+    if (backBtn) backBtn.classList.toggle('is-visible', index > 0 && !sent);
+    if (nextBtn) nextBtn.classList.toggle('is-hidden', atEnd);
+    if (sendBtn) sendBtn.classList.toggle('is-visible', atEnd);
+
+    if (note && !sent) note.textContent = atEnd ? i18n.t('formHoldHint') : i18n.t('formEnterHint');
+
+    if (atEnd && summary) {
+      summary.innerHTML = '';
+      inputs.forEach((input, i) => {
+        const row = document.createElement('div');
+        row.className = 'form__summary-row';
+
+        const key = document.createElement('span');
+        key.className = 'form__summary-key';
+        key.textContent = labelText(i).replace(/\?$/, '');
+
+        const value = document.createElement('span');
+        value.className = 'form__summary-value';
+        value.textContent = input.value.trim();
+
+        row.appendChild(key);
+        row.appendChild(value);
+        summary.appendChild(row);
+      });
+    }
+
+    if (touched && !atEnd && inputs[index]) {
+      setTimeout(() => inputs[index].focus({ preventScroll: true }), 60);
+    }
+  };
+
+  const advance = () => {
+    touched = true;
+    if (index >= steps.length) return;
+    if (!isValid(index)) {
+      inputs[index].classList.add('is-error');
+      if (note) note.textContent = inputs[index].type === 'email' ? i18n.t('formErrEmail') : i18n.t('formErrShort');
+      return;
+    }
+    index++;
+    paint();
+  };
+
+  inputs.forEach((input, i) => {
+    input.addEventListener('blur', () => input.classList.remove('is-error'));
+    input.addEventListener('input', () => {
+      segFills[i].style.width = isValid(i) ? '100%' : '0%';
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); advance(); }
+    });
+  });
+
+  if (nextBtn) nextBtn.addEventListener('click', advance);
+  if (backBtn) backBtn.addEventListener('click', () => {
+    if (sent) return;
+    if (index > 0) { index--; paint(); }
+  });
+
+  /* Drzi dugme da posalje */
+  if (sendBtn && sendFill) {
+    let raf = 0;
+    let holdStart = 0;
+
+    const finish = () => {
+      sent = true;
+      sendFill.style.width = '100%';
+      if (sendText) sendText.textContent = i18n.t('formSent');
+      if (note) { note.textContent = i18n.t('formSentNote'); note.classList.add('is-sent'); }
+      sendBtn.style.cursor = 'default';
+      if (backBtn) backBtn.classList.remove('is-visible');
+    };
+
+    const stop = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      if (!sent) sendFill.style.width = '0%';
+    };
+
+    const tick = (t) => {
+      const p = Math.min(1, (t - holdStart) / 900);
+      sendFill.style.width = (p * 100).toFixed(1) + '%';
+      if (p < 1) raf = requestAnimationFrame(tick); else finish();
+    };
+
+    sendBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (sent) return;
+      holdStart = performance.now();
+      raf = requestAnimationFrame(tick);
+    });
+    window.addEventListener('pointerup', stop);
+    sendBtn.addEventListener('pointerleave', stop);
+  }
+
+  form.addEventListener('submit', (e) => e.preventDefault());
+  paint();
+}
+
+/* ============================================================
+   15. SATOVI
+   ============================================================ */
+function initClocks() {
+  const heroClock = qs('#hero-clock');
+  const contactClock = qs('#contact-clock');
+
+  const time = () => new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Belgrade' });
+
+  const tick = () => {
+    if (heroClock) heroClock.textContent = '44.7866° N, 20.4489° E — ' + time();
+    if (contactClock) contactClock.textContent = i18n.t('city') + time();
+  };
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ============================================================
+   16. KOPIRANJE MEJLA
+   ============================================================ */
+function initCopyBand() {
+  const band = qs('#copy-band');
+  if (!band) return;
+
+  band.addEventListener('click', () => {
+    const hints = qsa('.copy-band__hint', band);
+    const say = (text) => hints.forEach(h => { h.textContent = text; });
+    const revert = () => setTimeout(() => say(i18n.t('copyIdle')), 1800);
+
+    const legacyCopy = () => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = MAIL;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, MAIL.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+      } catch (err) {
+        return false;
+      }
+    };
+
+    const fallback = () => {
+      marquees.forEach(m => { if (band.contains(m.track)) m.paused = true; });
+      const target = qs('.copy-band__mail', band);
+      if (target) {
+        try {
+          const sel = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(target);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } catch (err) { /* ignorisi */ }
+      }
+      say(i18n.t('copyLong'));
+      setTimeout(() => {
+        marquees.forEach(m => { if (band.contains(m.track)) m.paused = false; });
+        say(i18n.t('copyIdle'));
+      }, 6000);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      navigator.clipboard.writeText(MAIL)
+        .then(() => { say(i18n.t('copyDone')); revert(); })
+        .catch(() => { if (legacyCopy()) { say(i18n.t('copyDone')); revert(); } else fallback(); });
+    } else if (legacyCopy()) {
+      say(i18n.t('copyDone'));
+      revert();
+    } else {
+      fallback();
+    }
+  });
+}
+
+/* ============================================================
+   17. GLAVNA SCROLL PETLJA
+   Sve sto zavisi od pozicije skrola racuna se u jednom rAF-u.
+   ============================================================ */
+function startLoop() {
+  const dot = qs('#cursor-dot');
+  const cursorLabel = qs('#cursor-label');
+  const progress = qs('#scroll-progress');
+  const glow = qs('#contact-glow');
+
+  const heroCueFill = qs('#hero-cue-fill');
+
+  const storyWrap = qs('#story');
+  const storyTimer = qs('#story-timer');
+  const storyBar = qs('#story-bar');
+  const storyStages = qsa('.story__stage');
+  const storyTicks = qsa('.story__tick');
+
+  const railWrap = qs('#process-rail');
+  const railFill = qs('#process-rail-fill');
+  const procGhost = qs('#process-ghost');
+  const procSteps = qsa('.process-step');
+
+  const pinWrap = qs('#work-pin');
+  const pinTrack = qs('#work-track');
+
+  const parallaxEls = qsa('.js-parallax');
+  const fillTargets = qsa('.js-fill');
+
+  let scrollY = window.scrollY;
+  let lastScrollY = scrollY;
+  let velocity = 0;
+
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+
+  const loop = () => {
+    velocity += ((scrollY - lastScrollY) - velocity) * 0.14;
+    lastScrollY = scrollY;
+
+    /* --- Tekst koji se pali rec po rec --- */
+    fillTargets.forEach(el => {
+      const words = qsa('.fill-word', el);
+      const r = el.getBoundingClientRect();
+      const startY = window.innerHeight * 0.86;
+      const endY = window.innerHeight * 0.28;
+      const p = clamp((startY - r.top) / Math.max(1, startY - endY), 0, 1);
+      const lit = p * words.length;
+      words.forEach((w, i) => w.classList.toggle('is-lit', i < lit));
+    });
+
+    /* --- Before/after automatsko ljuljanje --- */
+    if (compare.el && compare.auto && compare.apply) {
+      const r = compare.el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        compare.pos = 50 + Math.sin(performance.now() / 1600) * 26;
+        compare.apply();
+      }
+    }
+
+    /* --- Sjaj u kontakt sekciji prati kursor --- */
+    if (glow) glow.style.transform = 'translate3d(' + pointer.cx + 'px,' + (pointer.cy + window.scrollY) + 'px,0)';
+
+    /* --- Hero bledi pri skrolovanju --- */
+    if (hero.base) {
+      const hr = hero.base.getBoundingClientRect();
+      const out = clamp(-hr.top / Math.max(1, window.innerHeight * 0.7), 0, 1);
+      hero.base.style.opacity = (1 - out * 0.75).toFixed(3);
+    }
+
+    if (heroCueFill) {
+      const c = (performance.now() / 1700) % 1;
+      heroCueFill.style.transform = 'translateX(' + ((c * 200) - 100).toFixed(1) + '%)';
+    }
+
+    /* --- Process: linija i aktivni korak --- */
+    if (railWrap && railFill) {
+      const r = railWrap.getBoundingClientRect();
+      const mark = window.innerHeight * 0.55;
+      const h = clamp((mark - r.top) / Math.max(1, r.height), 0, 1);
+      railFill.style.height = (h * 100).toFixed(2) + '%';
+
+      let active = 0;
+      procSteps.forEach((step, i) => {
+        const on = step.getBoundingClientRect().top < mark;
+        if (on) active = i;
+        step.classList.toggle('is-active', on);
+      });
+      if (procGhost) procGhost.textContent = '0' + (active + 1);
+    }
+
+    /* --- Story: tajmer, faze i kvacice --- */
+    if (storyWrap && storyStages.length) {
+      const r = storyWrap.getBoundingClientRect();
+      const span = storyWrap.offsetHeight - window.innerHeight;
+      const p = span > 0 ? clamp(-r.top / span, 0, 1) : 0;
+      const held = Math.min(1, p / 0.86);
+
+      if (storyTimer) storyTimer.textContent = (held * 6).toFixed(1);
+      if (storyBar) storyBar.style.width = (held * 100).toFixed(1) + '%';
+
+      const n = storyStages.length;
+      const fpos = Math.min(n - 1, p * (n - 0.15));
+
+      storyStages.forEach((stage, i) => {
+        const d = Math.abs(fpos - i);
+        const o = d <= 0.42 ? 1 : Math.max(0, 1 - (d - 0.42) / 0.28);
+        stage.style.opacity = o.toFixed(3);
+        stage.style.transform = 'translate3d(0,' + ((fpos - i) * -22).toFixed(1) + 'px,0)';
+        stage.style.filter = o < 0.99 ? 'blur(' + ((1 - o) * 2.5).toFixed(2) + 'px)' : 'none';
+        stage.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+      });
+
+      storyTicks.forEach((tick, i) => {
+        tick.classList.toggle('is-on', held * 5 > i + 0.4);
+      });
+    }
+
+    /* --- Radovi: horizontalni scroll --- */
+    if (pinWrap && pinTrack) {
+      const r = pinWrap.getBoundingClientRect();
+      const span = pinWrap.offsetHeight - window.innerHeight;
+      const p = span > 0 ? clamp(-r.top / span, 0, 1) : 0;
+      const dist = Math.max(0, pinTrack.scrollWidth - window.innerWidth + 48);
+      pinTrack.style.transform = 'translate3d(' + (-p * dist).toFixed(1) + 'px,0,0)';
+    }
+
+    /* --- Marquee trake --- */
+    marquees.forEach(m => {
+      if (!m.width || m.paused) return;
+      m.x -= m.speed + Math.abs(velocity) * 0.03;
+      if (m.x <= -m.width) m.x += m.width;
+      m.track.style.transform = 'translate3d(' + m.x.toFixed(2) + 'px,0,0)';
+    });
+
+    /* --- Kursor --- */
+    pointer.cx += (pointer.mx - pointer.cx) * 0.22;
+    pointer.cy += (pointer.my - pointer.cy) * 0.22;
+
+    if (dot) {
+      const r = dot.getBoundingClientRect();
+      dot.style.transform = 'translate3d(' + (pointer.cx - r.width / 2) + 'px,' + (pointer.cy - r.height / 2) + 'px,0)';
+    }
+    if (cursorLabel) {
+      cursorLabel.style.transform = 'translate3d(' + (pointer.cx + 18) + 'px,' + (pointer.cy + 18) + 'px,0)';
+    }
+
+    /* --- Traka napretka --- */
+    if (progress) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
+    }
+
+    /* --- Parallax --- */
+    if (!prefersReducedMotion) {
+      parallaxEls.forEach(el => {
+        const r = el.getBoundingClientRect();
+        const off = (r.top + r.height / 2 - window.innerHeight / 2) * parseFloat(el.dataset.parallax || '0');
+        el.style.transform = 'translate3d(0,' + off.toFixed(1) + 'px,0)';
+      });
+    }
+
+    requestAnimationFrame(loop);
+  };
+
+  requestAnimationFrame(loop);
+}
+
+/* ============================================================
+   18. START
+   ============================================================ */
+function init() {
   document.documentElement.classList.add('js-on');
 
-  initMenu();
-  initAccordions();
-  initReveal();
-  initCounters();
-  initPriceSwitch();
-  initFeature();
-  initReviews();
-  initToTop();
+  initMobileMenu();
+  splitHeadings(false);
+  fillHeadings(false);
+  initReveals();
+  initCursor();
+  initMarquees();
+  initHero();
+  initCompare();
+  initServices();
+  initFaq();
+  initForm();
+  initClocks();
+  initCopyBand();
+
+  startLoop();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initPreloader(init);
 });
