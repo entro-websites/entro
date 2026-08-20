@@ -25,7 +25,31 @@ function initMenu() {
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
 }
 
+
+/* Akordeon: u grupi je otvorena najvise jedna stavka */
+function initAccordions() {
+  qsa('[data-acc]').forEach(group => {
+    const items = qsa('[data-acc-item]', group);
+
+    const paint = (openIndex) => {
+      items.forEach((item, i) => {
+        const on = i === openIndex;
+        item.classList.toggle('is-open', on);
+        const btn = qs('[data-acc-btn]', item);
+        if (btn) btn.setAttribute('aria-expanded', String(on));
+      });
+    };
+
+    items.forEach((item, i) => {
+      const btn = qs('[data-acc-btn]', item);
+      if (!btn) return;
+      btn.addEventListener('click', () => paint(item.classList.contains('is-open') ? -1 : i));
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.classList.add('js-on');
   initMenu();
+  initAccordions();
 });

@@ -34,10 +34,11 @@
   --text-60: rgba(238, 239, 234, 0.6);
   --text-40: rgba(238, 239, 234, 0.4);
 
-  --rule: rgba(198, 203, 137, 0.16);
+  --paper: #eeefea;
+  --rule: rgba(120, 138, 126, 0.34);
   --line: rgba(238, 239, 234, 0.14);
 
-  --plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' preserveAspectRatio='xMinYMid meet'%3E%3Cpath d='M5.5 1v9M1 5.5h9' stroke='%23c6cb89' stroke-opacity='0.45' stroke-width='1'/%3E%3C/svg%3E");
+  --plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' preserveAspectRatio='xMinYMid meet'%3E%3Cpath d='M5.5 1v9M1 5.5h9' stroke='%23788a7e' stroke-width='1'/%3E%3C/svg%3E");
 
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --pad: clamp(20px, 4vw, 62px);
@@ -82,6 +83,16 @@ h1, p { margin: 0; }
 
 .sec { position: relative; overflow: hidden; }
 
+.sec--light {
+  background: var(--paper);
+  color: var(--ink);
+  --text-60: rgba(17, 24, 24, 0.62);
+  --text-40: rgba(17, 24, 24, 0.45);
+  --line: rgba(17, 24, 24, 0.16);
+}
+
+.sec--light .eyebrow i { color: inherit; }
+
 /* ============================================================
    03. MREZA OD PET KOLONA
    Sadrzaj se lepi tacno na ove linije, bez razmaka izmedju kolona.
@@ -121,7 +132,13 @@ h1, p { margin: 0; }
   z-index: 2;
 }
 
-.rule::before {
+.hr {
+  position: relative;
+  height: 11px;
+  z-index: 2;
+}
+
+.rule::before, .hr::before {
   content: '';
   position: absolute;
   inset: 5px 0 auto 0;
@@ -129,7 +146,7 @@ h1, p { margin: 0; }
   background: var(--rule);
 }
 
-.rule::after {
+.rule::after, .hr::after {
   content: '';
   position: absolute;
   inset: 0 0 0 0;
@@ -139,7 +156,8 @@ h1, p { margin: 0; }
   background-position: -5.5px center, calc(100% + 5.5px) center;
 }
 
-.rule--top { top: calc(var(--hdr-h) + clamp(24px, 5vh, 56px)); }
+.rule--top { top: clamp(18px, 3vh, 30px); }
+.hero .rule--top { top: calc(var(--hdr-h) + clamp(24px, 5vh, 56px)); }
 .rule--bottom { bottom: clamp(24px, 4vh, 44px); }
 
 /* Veliki cvet u pozadini */
@@ -212,6 +230,38 @@ h1, p { margin: 0; }
   text-transform: uppercase;
   color: var(--text-40);
 }
+
+.h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.9vw, 56px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+
+.lead {
+  margin: 0;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.55;
+  color: var(--text-60);
+}
+
+.btn--dark { background: var(--ink); color: var(--paper); }
+.btn--dark .btn__ico { border-left: 1px solid rgba(238, 239, 234, 0.28); }
+.btn--dark:hover { background: var(--blue); }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid currentColor;
+}
+
+.link-arrow span { transition: transform 0.25s var(--ease); }
+.link-arrow:hover span { transform: translateX(4px); }
 
 /* ============================================================
    05. HEADER I MENI
@@ -345,6 +395,8 @@ h1, p { margin: 0; }
 .face:first-child { margin-left: 0; }
 .face img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; filter: grayscale(1) contrast(1.05); }
 .face--empty { background: repeating-linear-gradient(135deg, rgba(198, 203, 137, 0.1) 0 6px, rgba(198, 203, 137, 0.2) 6px 12px); }
+.sec--light .face { border-color: var(--paper); }
+.sec--light .face--empty { background: repeating-linear-gradient(135deg, rgba(17, 24, 24, 0.08) 0 6px, rgba(17, 24, 24, 0.17) 6px 12px); }
 
 .founders__text { display: grid; font-size: 13px; line-height: 1.4; }
 .founders__text span { color: var(--text-40); }
@@ -411,8 +463,20 @@ h1, p { margin: 0; }
   .seals { flex-wrap: wrap; }
 }
 
+@media (max-width: 1100px) {
+  .acc__head, .acc__inner { grid-template-columns: 1fr 4fr; }
+  .acc__num { grid-column: 1; }
+  .acc__head-main, .acc__desc, .ph--why { grid-column: 2; }
+  .acc__side { grid-column: 2; grid-row: 3; padding-right: 0; }
+  .ph--why { grid-row: 2; margin-bottom: clamp(20px, 3vh, 34px); }
+  .why__head { grid-template-columns: minmax(0, 1fr); }
+  .why__head .eyebrow { margin-bottom: 16px; }
+}
+
 @media (max-width: 760px) {
   .ph--video { aspect-ratio: 4 / 3; }
+  .acc__head, .acc__inner { grid-template-columns: 46px minmax(0, 1fr); }
+  .acc__list li { margin-bottom: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -455,3 +519,156 @@ h1, p { margin: 0; }
 
 .video__play svg { width: 26%; height: 26%; }
 .video__play:hover { transform: scale(1.07); background: var(--lime); color: var(--ink); }
+
+/* ============================================================
+   08. ZASTO ENTRO
+   Mreza od pet kolona: labela je 1. kolona, broj 2, sadrzaj 3-5.
+   ============================================================ */
+.why {
+  padding-top: clamp(66px, 11vh, 118px);
+  padding-bottom: clamp(40px, 6vh, 74px);
+}
+
+.why__head {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  padding-bottom: clamp(40px, 6vh, 78px);
+}
+
+.why__head-main { min-width: 0; }
+.why__head .h2 { max-width: 19ch; }
+.why__head .lead { margin-top: 20px; max-width: 44ch; }
+
+.why__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 34px;
+}
+
+.minirate { display: flex; align-items: center; gap: 16px; }
+.minirate__text { display: grid; font-size: 13px; line-height: 1.4; }
+.minirate__text span { color: var(--text-40); }
+.minirate__text strong { font-weight: 700; }
+
+/* --- akordeon --- */
+.acc__head {
+  display: grid;
+  grid-template-columns: 1fr 1fr 3fr;
+  align-items: center;
+  width: 100%;
+  padding-top: clamp(22px, 3.2vh, 38px);
+  padding-bottom: clamp(14px, 2vh, 24px);
+  text-align: left;
+}
+
+.acc__num {
+  grid-column: 2;
+  font-size: clamp(22px, 2.9vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--text-40);
+  transition: color 0.3s ease;
+}
+
+.acc__head-main {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.acc__title {
+  font-size: clamp(22px, 2.9vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  color: var(--text-40);
+  transition: color 0.3s ease;
+}
+
+.acc__item.is-open .acc__num, .acc__item.is-open .acc__title { color: var(--ink); }
+
+.acc__ico {
+  position: relative;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  opacity: 0.5;
+}
+
+.acc__ico::before, .acc__ico::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+  transition: transform 0.35s var(--ease);
+}
+
+.acc__ico::before { width: 100%; height: 1.5px; }
+.acc__ico::after { width: 1.5px; height: 100%; }
+
+.acc__item.is-open .acc__ico { opacity: 1; }
+.acc__item.is-open .acc__ico::before, .acc__item.is-open .acc__ico::after { transform: rotate(45deg); }
+
+.acc__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease);
+}
+
+.acc__item.is-open .acc__panel { grid-template-rows: 1fr; }
+
+.acc__inner {
+  overflow: hidden;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 3fr;
+  column-gap: 0;
+}
+
+.acc__desc {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 0 0 clamp(24px, 3vh, 40px);
+  max-width: 52ch;
+  font-size: 15px;
+  color: var(--text-60);
+}
+
+.acc__side {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  padding-right: clamp(16px, 2vw, 34px);
+  padding-bottom: clamp(24px, 4vh, 46px);
+}
+
+.acc__list { margin: 0; padding: 0; list-style: none; }
+
+.acc__list li {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.acc__list span { font-size: 13px; color: var(--text-40); }
+.acc__list strong { font-size: 15px; font-weight: 700; }
+
+.acc__side .link-arrow { margin-top: auto; align-self: flex-start; }
+
+.ph--why {
+  grid-column: 3;
+  grid-row: 2;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  align-items: start;
+  margin-bottom: clamp(24px, 4vh, 46px);
+}
